@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ grupo.nome }}</h2>
+    <div>
+        <a href="{% url 'adicionar_receita' grupo.pk %}" class="btn btn-primary btn-sm">+ Receita</a>
+        <a href="{% url 'sair_grupo' grupo.pk %}" class="btn btn-outline-danger btn-sm ms-2">Sair do grupo</a>
+        {% if grupo.admin == user %}
+            <a href="{% url 'excluir_grupo' grupo.pk %}" 
+               class="btn btn-danger btn-sm ms-2"
+               onclick="return confirm('Tem certeza que deseja excluir o grupo e todas as receitas?')">
+               🗑️ Excluir grupo
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<p class="text-muted">{{ grupo.descricao }}</p>
+<small class="text-muted">Admin: {{ grupo.admin.username }} | {{ grupo.membros.count }} membro(s)</small>
+
+<hr>
+
+<h4 class="mt-4 mb-3">Receitas do grupo</h4>
+
+{% if receitas %}
+    <div class="row">
+        {% for receita in receitas %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if receita.imagem %}
+                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ receita.titulo }}</h5>
+                        <small class="text-muted">Por {{ receita.autor.username }}</small>
+                        {% if receita.media_avaliacao %}
+                            <p class="mt-1">⭐ {{ receita.media_avaliacao }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'detalhe_receita' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted">Nenhuma receita ainda. Seja o primeiro a adicionar!</p>
+{% endif %}
+{% endblock %}

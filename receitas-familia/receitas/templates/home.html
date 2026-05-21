@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Meus Grupos Familiares</h2>
+    <a href="{% url 'criar_grupo' %}" class="btn btn-primary">+ Novo Grupo</a>
+</div>
+
+{% if grupos %}
+    <div class="row">
+        {% for grupo in grupos %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ grupo.nome }}</h5>
+                        <p class="card-text text-muted">{{ grupo.descricao }}</p>
+                        <small class="text-muted">{{ grupo.membros.count }} membro(s)</small>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'detalhe_grupo' grupo.pk %}" class="btn btn-outline-primary btn-sm">Ver grupo</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center mt-5">
+        <p class="text-muted">Você ainda não participa de nenhum grupo.</p>
+        <a href="{% url 'criar_grupo' %}" class="btn btn-primary">Criar meu primeiro grupo</a>
+    </div>
+{% endif %}
+{% endblock %}
