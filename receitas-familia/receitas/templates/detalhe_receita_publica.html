@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>{{ receita.titulo }}</h2>
+        <small class="text-muted">Por {{ receita.autor.username }} em {{ receita.criado_em|date:"d/m/Y" }}</small>
+
+        {% if receita.imagem %}
+            <img src="{{ receita.imagem.url }}" class="img-fluid rounded mt-3 mb-3" style="max-height: 350px;">
+        {% endif %}
+
+        <h5 class="mt-3">Ingredientes</h5>
+        <p>{{ receita.ingredientes|linebreaks }}</p>
+
+        <h5>Modo de preparo</h5>
+        <p>{{ receita.modo_preparo|linebreaks }}</p>
+
+        <div class="mt-3">
+            {% if user.is_authenticated %}
+                {% if not ja_avaliou %}
+                    <a href="{% url 'avaliar_receita_publica' receita.pk %}" class="btn btn-outline-primary btn-sm ms-2">⭐ Avaliar</a>
+                {% endif %}
+                {% if receita.autor == user %}
+                    <a href="{% url 'remover_receita_publica' receita.pk %}"
+                       class="btn btn-outline-danger btn-sm ms-2"
+                       onclick="return confirm('Remover esta receita do feed?')">
+                       🗑️ Remover
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <h5>Avaliações ({{ avaliacoes.count }})
+            {% if receita.media_avaliacao %}
+                <small class="text-muted">— Média: ⭐ {{ receita.media_avaliacao }}</small>
+            {% endif %}
+        </h5>
+
+        {% for avaliacao in avaliacoes %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <strong>{{ avaliacao.usuario.username }}</strong>
+                    <span class="ms-2">⭐ {{ avaliacao.estrelas }}/5</span>
+                    {% if avaliacao.comentario %}
+                        <p class="mb-0 mt-1">{{ avaliacao.comentario }}</p>
+                    {% endif %}
+                    {% if avaliacao.usuario == user %}
+                        <a href="{% url 'remover_avaliacao_publica' avaliacao.pk %}" class="btn btn-outline-danger btn-sm mt-2">Remover avaliação</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Nenhuma avaliação ainda.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

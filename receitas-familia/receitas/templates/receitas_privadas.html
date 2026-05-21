@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">🔒 Minhas Receitas Privadas</h2>
+
+{% if receitas_privadas %}
+    <div class="row">
+        {% for receita in receitas_privadas %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if receita.imagem %}
+                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ receita.titulo }}</h5>
+                        <small class="text-muted">{{ receita.criado_em|date:"d/m/Y" }}</small>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
+                        <div>
+                            <a href="{% url 'tornar_publica' receita.pk %}"
+                            class="btn btn-outline-success btn-sm me-1"
+                            onclick="return confirm('Tornar esta receita pública?')">🌐 Tornar pública</a>
+                            <a href="{% url 'remover_receita_publica' receita.pk %}"
+                            class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Remover esta receita?')">🗑️</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted">Você não tem receitas privadas ainda.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">❤️ Minhas Receitas Salvas</h2>
+
+<h4>Do Feed</h4>
+{% if favoritas_feed %}
+    <div class="row">
+        {% for receita in favoritas_feed %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if receita.imagem %}
+                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ receita.titulo }}</h5>
+                        <small class="text-muted">Por {{ receita.autor.username }}</small>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted">Nenhuma receita do feed salva ainda.</p>
+{% endif %}
+
+<hr>
+
+<h4>Dos Grupos Familiares</h4>
+{% if favoritas_grupos %}
+    <div class="row">
+        {% for receita in favoritas_grupos %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if receita.imagem %}
+                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ receita.titulo }}</h5>
+                        <small class="text-muted">Por {{ receita.autor.username }}</small>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'detalhe_receita' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted">Nenhuma receita dos grupos salva ainda.</p>
+{% endif %}
+{% endblock %}

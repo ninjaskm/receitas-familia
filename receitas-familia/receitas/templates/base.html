@@ -9,11 +9,28 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">🍽️ Receitas da Família</a>
-            <div class="ms-auto">
+            <a class="navbar-brand" href="{% url 'feed' %}">🍽️ Receitas da Família</a>
+            <div class="ms-auto d-flex align-items-center">
+                <a href="{% url 'feed' %}" class="btn btn-outline-light btn-sm me-3">🍽️ Feed</a>
                 {% if user.is_authenticated %}
-                    <span class="text-white me-3">Olá, {{ user.username }}</span>
-                    <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Sair</a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-light btn-sm me-2">Meus Grupos</a>
+                    <div class="dropdown me-2">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Olá, {{ user.username }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'receitas_favoritas' %}">❤️ Receitas Salvas</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'minhas_receitas_privadas' %}">🔒 Receitas Privadas</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">Sair</a>
+                            </li>
+                        </ul>
+                    </div>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2">Entrar</a>
                     <a href="{% url 'registrar' %}" class="btn btn-light btn-sm">Cadastrar</a>
