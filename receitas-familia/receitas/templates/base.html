@@ -21,7 +21,7 @@
     <header class="app-navbar">
         <div class="container-app">
             <div class="navbar-inner{% if not user.is_authenticated %}{% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'registrar' %} navbar-inner--auth{% endif %}{% endif %}">
-                <a href="{% if user.is_authenticated %}{% url 'home' %}{% else %}{% url 'feed' %}{% endif %}" class="app-brand text-decoration-none">
+                <a href="{% url 'feed' %}" class="app-brand text-decoration-none">
                     <span class="app-brand__icon" aria-hidden="true">🍳</span>
                     <span>Receitas da Família</span>
                 </a>
