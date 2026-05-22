@@ -1,0 +1,51 @@
+<article class="card-app">
+    {% if receita.imagem %}
+        <div class="card-app__media">
+            <img src="{{ receita.imagem.url }}" alt="{{ receita.titulo }}" loading="lazy">
+        </div>
+    {% else %}
+        <div class="card-app__media card-app__media--placeholder" aria-hidden="true">🍽️</div>
+    {% endif %}
+    <div class="card-app__body">
+        <h3 class="card-app__title">{{ receita.titulo }}</h3>
+        <p class="card-app__meta">Por {{ receita.autor.username }} &middot; {{ receita.criado_em|date:"d/m/Y" }}</p>
+        <p class="card-app__text">{{ receita.ingredientes|truncatewords:18 }}</p>
+    </div>
+    <div class="card-app__footer">
+        <div class="card-app__actions">
+            {% if user.is_authenticated %}
+                {% if receita.autor == user %}
+                    <form method="post"
+                          action="{% url 'tornar_privada' receita.pk %}"
+                          class="form-inline-action"
+                          data-confirm="Tornar privada? A receita sairá do feed e ficará em Minhas Privadas.">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-app btn-app--secondary btn-app--sm" title="Tornar privada">
+                            🔒 Privada
+                        </button>
+                    </form>
+                {% endif %}
+                <button type="button"
+                        class="btn-app btn-app--warning btn-app--icon btn-app--sm btn-favoritar{% if user in receita.favoritos.all %} is-favorited{% endif %}"
+                        data-url="{% url 'favoritar_receita_publica' receita.pk %}"
+                        data-favoritado="{% if user in receita.favoritos.all %}true{% else %}false{% endif %}"
+                        data-icon-on="♥"
+                        data-icon-off="♡"
+                        aria-pressed="{% if user in receita.favoritos.all %}true{% else %}false{% endif %}"
+                        title="Favoritar">
+                    {% if user in receita.favoritos.all %}♥{% else %}♡{% endif %}
+                </button>
+            {% endif %}
+            <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn-app btn-app--primary btn-app--sm">Ver receita</a>
+            {% if receita.autor == user %}
+                <form method="post"
+                      action="{% url 'remover_receita_publica' receita.pk %}"
+                      class="form-inline-action"
+                      data-confirm="Remover esta receita do feed?">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-app btn-app--danger btn-app--icon btn-app--sm" title="Remover">🗑</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</article>

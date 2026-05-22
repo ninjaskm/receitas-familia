@@ -85,6 +85,7 @@ USE_TZ = True
 
 # Arquivos estáticos
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'receitas' / 'static']
 
 # Upload de imagens
 MEDIA_URL = '/media/'

@@ -1,23 +1,29 @@
 {% extends 'base.html' %}
 
+{% block title %}Transferir Admin — Receitas da Família{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-5">
-        <h3 class="mb-4">Transferir admin do grupo "{{ grupo.nome }}"</h3>
-        <p class="text-muted">Escolha um membro para ser o novo administrador antes de sair:</p>
-        <form method="post">
-            {% csrf_token %}
-            {% for membro in membros %}
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="novo_admin" value="{{ membro.pk }}" id="membro{{ membro.pk }}" required>
-                    <label class="form-check-label" for="membro{{ membro.pk }}">
-                        {{ membro.username }}
+    <div class="col-12 col-lg-6">
+        <div class="form-card mx-auto">
+            <h2 class="form-card__title">Transferir administrador</h2>
+            <p class="form-card__subtitle">
+                Escolha um novo admin para o grupo <strong>{{ grupo.nome }}</strong> antes de sair.
+            </p>
+            <form method="post" class="form-app">
+                {% csrf_token %}
+                {% for membro in membros %}
+                    <label class="form-check-app" for="membro{{ membro.pk }}">
+                        <input class="form-check-input" type="radio" name="novo_admin" value="{{ membro.pk }}" id="membro{{ membro.pk }}" required>
+                        <span>{{ membro.username }}</span>
                     </label>
+                {% endfor %}
+                <div class="form-actions">
+                    <button type="submit" class="btn-app btn-app--danger">Transferir e sair</button>
+                    <a href="{% url 'detalhe_grupo' grupo.pk %}" class="btn-app btn-app--secondary">Cancelar</a>
                 </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-danger mt-3">Transferir e sair do grupo</button>
-            <a href="{% url 'detalhe_grupo' grupo.pk %}" class="btn btn-secondary ms-2 mt-3">Cancelar</a>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

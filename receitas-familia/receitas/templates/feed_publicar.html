@@ -1,15 +1,95 @@
 {% extends 'base.html' %}
 
+{% block title %}Publicar Receita — Receitas da Família{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <h3 class="mb-4">Publicar Receita no Feed</h3>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Publicar</button>
-            <a href="{% url 'feed' %}" class="btn btn-secondary ms-2">Cancelar</a>
-        </form>
+    <div class="col-12 col-lg-8">
+        <div class="form-card form-card--wide mx-auto">
+            <h2 class="form-card__title">Publicar no Feed</h2>
+            <p class="form-card__subtitle">Compartilhe sua receita com a comunidade ou mantenha só para você</p>
+            <form method="post" enctype="multipart/form-data" class="form-app" id="formPublicar">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_titulo" class="form-label">Título</label>
+                    {{ form.titulo }}
+                    {{ form.titulo.errors }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_ingredientes" class="form-label">Ingredientes</label>
+                    {{ form.ingredientes }}
+                    {{ form.ingredientes.errors }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_modo_preparo" class="form-label">Modo de preparo</label>
+                    {{ form.modo_preparo }}
+                    {{ form.modo_preparo.errors }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_imagem" class="form-label">Imagem (opcional)</label>
+                    {{ form.imagem }}
+                    {{ form.imagem.errors }}
+                </div>
+
+                <label class="privacy-toggle" id="privacyToggle">
+                    <input type="checkbox"
+                           name="privada"
+                           id="id_privada"
+                           value="1"
+                           class="privacy-toggle__input"
+                           {% if form.privada.value %}checked{% endif %}>
+                    <span class="privacy-toggle__surface">
+                        <span class="privacy-toggle__track" aria-hidden="true">
+                            <span class="privacy-toggle__thumb"></span>
+                        </span>
+                        <span class="privacy-toggle__copy">
+                            <strong class="privacy-toggle__title">Receita privada</strong>
+                            <span class="privacy-toggle__hint" id="privacyHint">
+                                Desligado — sua receita aparecerá no feed para todos.
+                            </span>
+                        </span>
+                    </span>
+                </label>
+                {{ form.privada.errors }}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-app btn-app--primary" id="btnPublicar">Publicar no feed</button>
+                    <a href="{% url 'feed' %}" class="btn-app btn-app--secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var input = document.getElementById("id_privada");
+    var toggle = document.getElementById("privacyToggle");
+    var hint = document.getElementById("privacyHint");
+    var btn = document.getElementById("btnPublicar");
+    if (!input || !toggle) return;
+
+    function sync() {
+        var on = input.checked;
+        toggle.classList.toggle("is-on", on);
+        if (hint) {
+            hint.textContent = on
+                ? "Ligado — só você verá esta receita (em Minhas Privadas)."
+                : "Desligado — sua receita aparecerá no feed para todos.";
+        }
+        if (btn) {
+            btn.textContent = on ? "Salvar como privada" : "Publicar no feed";
+        }
+    }
+
+    input.addEventListener("change", sync);
+    sync();
+})();
+</script>
 {% endblock %}

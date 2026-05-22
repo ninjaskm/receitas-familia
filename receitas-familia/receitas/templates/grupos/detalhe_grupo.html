@@ -1,50 +1,62 @@
 {% extends 'base.html' %}
+
+{% block title %}{{ grupo.nome }} — Receitas da Família{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>{{ grupo.nome }}</h2>
+<div class="page-header">
     <div>
-        <a href="{% url 'adicionar_receita' grupo.pk %}" class="btn btn-primary btn-sm">+ Receita</a>
-        <a href="{% url 'sair_grupo' grupo.pk %}" class="btn btn-outline-danger btn-sm ms-2">Sair do grupo</a>
+        <h1 class="page-title">{{ grupo.nome }}</h1>
+        <p class="page-subtitle">{{ grupo.descricao|default:"Grupo familiar" }}</p>
+        <p class="text-muted-app mb-0">
+            <span class="badge-app">Admin: {{ grupo.admin.username }}</span>
+            <span class="badge-app badge-app--muted ms-1">{{ grupo.membros.count }} membro{{ grupo.membros.count|pluralize:"s" }}</span>
+        </p>
+    </div>
+    <div class="page-header__actions">
+        <a href="{% url 'adicionar_receita' grupo.pk %}" class="btn-app btn-app--primary btn-app--sm">+ Receita</a>
+        <a href="{% url 'sair_grupo' grupo.pk %}" class="btn-app btn-app--danger btn-app--sm">Sair</a>
         {% if grupo.admin == user %}
-            <a href="{% url 'excluir_grupo' grupo.pk %}" 
-               class="btn btn-danger btn-sm ms-2"
-               onclick="return confirm('Tem certeza que deseja excluir o grupo e todas as receitas?')">
-               🗑️ Excluir grupo
-        </a>
+            <a href="{% url 'excluir_grupo' grupo.pk %}"
+               class="btn-app btn-app--danger btn-app--sm"
+               data-confirm="Tem certeza que deseja excluir o grupo e todas as receitas?">
+               Excluir grupo
+            </a>
         {% endif %}
     </div>
 </div>
 
-<p class="text-muted">{{ grupo.descricao }}</p>
-<small class="text-muted">Admin: {{ grupo.admin.username }} | {{ grupo.membros.count }} membro(s)</small>
-
-<hr>
-
-<h4 class="mt-4 mb-3">Receitas do grupo</h4>
+<h2 class="section-title">Receitas do grupo</h2>
 
 {% if receitas %}
-    <div class="row">
+    <div class="grid-cards">
         {% for receita in receitas %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    {% if receita.imagem %}
-                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+            <article class="card-app">
+                {% if receita.imagem %}
+                    <div class="card-app__media">
+                        <img src="{{ receita.imagem.url }}" alt="{{ receita.titulo }}" loading="lazy">
+                    </div>
+                {% else %}
+                    <div class="card-app__media card-app__media--placeholder" aria-hidden="true">🍽️</div>
+                {% endif %}
+                <div class="card-app__body">
+                    <h3 class="card-app__title">{{ receita.titulo }}</h3>
+                    <p class="card-app__meta">Por {{ receita.autor.username }}</p>
+                    {% if receita.media_avaliacao %}
+                        <span class="card-app__rating">★ {{ receita.media_avaliacao }}</span>
                     {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ receita.titulo }}</h5>
-                        <small class="text-muted">Por {{ receita.autor.username }}</small>
-                        {% if receita.media_avaliacao %}
-                            <p class="mt-1">⭐ {{ receita.media_avaliacao }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="card-footer">
-                        <a href="{% url 'detalhe_receita' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
-                    </div>
                 </div>
-            </div>
+                <div class="card-app__footer">
+                    <a href="{% url 'detalhe_receita' receita.pk %}" class="btn-app btn-app--primary btn-app--sm">Ver receita</a>
+                </div>
+            </article>
         {% endfor %}
     </div>
 {% else %}
-    <p class="text-muted">Nenhuma receita ainda. Seja o primeiro a adicionar!</p>
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">📖</div>
+        <h2 class="empty-state__title">Nenhuma receita ainda</h2>
+        <p class="empty-state__text">Seja o primeiro a adicionar uma receita neste grupo.</p>
+        <a href="{% url 'adicionar_receita' grupo.pk %}" class="btn-app btn-app--primary">Adicionar receita</a>
+    </div>
 {% endif %}
 {% endblock %}

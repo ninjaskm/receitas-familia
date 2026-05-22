@@ -1,55 +1,69 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2 class="mb-4">❤️ Minhas Receitas Salvas</h2>
+{% block title %}Favoritas — Receitas da Família{% endblock %}
 
-<h4>Do Feed</h4>
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Receitas Favoritas</h1>
+        <p class="page-subtitle">Suas receitas salvas do feed e dos grupos</p>
+    </div>
+</div>
+
+<h2 class="section-title">Do Feed</h2>
 {% if favoritas_feed %}
-    <div class="row">
+    <div class="grid-cards mb-section">
         {% for receita in favoritas_feed %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    {% if receita.imagem %}
-                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ receita.titulo }}</h5>
-                        <small class="text-muted">Por {{ receita.autor.username }}</small>
+            <article class="card-app">
+                {% if receita.imagem %}
+                    <div class="card-app__media">
+                        <img src="{{ receita.imagem.url }}" alt="{{ receita.titulo }}" loading="lazy">
                     </div>
-                    <div class="card-footer">
-                        <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
-                    </div>
+                {% else %}
+                    <div class="card-app__media card-app__media--placeholder" aria-hidden="true">🍽️</div>
+                {% endif %}
+                <div class="card-app__body">
+                    <h3 class="card-app__title">{{ receita.titulo }}</h3>
+                    <p class="card-app__meta">Por {{ receita.autor.username }}</p>
                 </div>
-            </div>
+                <div class="card-app__footer">
+                    <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn-app btn-app--primary btn-app--sm">Ver receita</a>
+                </div>
+            </article>
         {% endfor %}
     </div>
 {% else %}
-    <p class="text-muted">Nenhuma receita do feed salva ainda.</p>
+    <p class="text-muted-app mb-section">Nenhuma receita do feed salva ainda.</p>
 {% endif %}
 
-<hr>
-
-<h4>Dos Grupos Familiares</h4>
+<h2 class="section-title">Dos Grupos Familiares</h2>
 {% if favoritas_grupos %}
-    <div class="row">
+    <div class="grid-cards">
         {% for receita in favoritas_grupos %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    {% if receita.imagem %}
-                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ receita.titulo }}</h5>
-                        <small class="text-muted">Por {{ receita.autor.username }}</small>
+            <article class="card-app">
+                {% if receita.imagem %}
+                    <div class="card-app__media">
+                        <img src="{{ receita.imagem.url }}" alt="{{ receita.titulo }}" loading="lazy">
                     </div>
-                    <div class="card-footer">
-                        <a href="{% url 'detalhe_receita' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
-                    </div>
+                {% else %}
+                    <div class="card-app__media card-app__media--placeholder" aria-hidden="true">🍽️</div>
+                {% endif %}
+                <div class="card-app__body">
+                    <h3 class="card-app__title">{{ receita.titulo }}</h3>
+                    <p class="card-app__meta">Por {{ receita.autor.username }}</p>
                 </div>
-            </div>
+                <div class="card-app__footer">
+                    <a href="{% url 'detalhe_receita' receita.pk %}" class="btn-app btn-app--primary btn-app--sm">Ver receita</a>
+                </div>
+            </article>
         {% endfor %}
     </div>
 {% else %}
-    <p class="text-muted">Nenhuma receita dos grupos salva ainda.</p>
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">♡</div>
+        <h2 class="empty-state__title">Nenhuma favorita dos grupos</h2>
+        <p class="empty-state__text">Favorite receitas nos grupos ou no feed para vê-las aqui.</p>
+        <a href="{% url 'feed' %}" class="btn-app btn-app--primary">Explorar feed</a>
+    </div>
 {% endif %}
 {% endblock %}

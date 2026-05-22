@@ -1,0 +1,38 @@
+{# Campo de estrelas 1–5. Requer: form com campo estrelas #}
+<div class="star-rating-field">
+    <span class="form-label star-rating-field__label">Sua nota</span>
+    <div class="star-rating" role="radiogroup" aria-label="Escolha de 1 a 5 estrelas" id="starRatingGroup">
+        <input type="radio" name="estrelas" id="star-5" value="5" class="star-rating__input"
+               {% if form.estrelas.value == 5 or form.estrelas.value == '5' %}checked{% endif %}>
+        <label for="star-5" class="star-rating__btn" data-star="5">{% include 'partials/star_svg.html' with class='star-rating__svg' %}</label>
+
+        <input type="radio" name="estrelas" id="star-4" value="4" class="star-rating__input"
+               {% if form.estrelas.value == 4 or form.estrelas.value == '4' %}checked{% endif %}>
+        <label for="star-4" class="star-rating__btn" data-star="4">{% include 'partials/star_svg.html' with class='star-rating__svg' %}</label>
+
+        <input type="radio" name="estrelas" id="star-3" value="3" class="star-rating__input"
+               {% if form.estrelas.value == 3 or form.estrelas.value == '3' %}checked{% endif %}>
+        <label for="star-3" class="star-rating__btn" data-star="3">{% include 'partials/star_svg.html' with class='star-rating__svg' %}</label>
+
+        <input type="radio" name="estrelas" id="star-2" value="2" class="star-rating__input"
+               {% if form.estrelas.value == 2 or form.estrelas.value == '2' %}checked{% endif %}>
+        <label for="star-2" class="star-rating__btn" data-star="2">{% include 'partials/star_svg.html' with class='star-rating__svg' %}</label>
+
+        <input type="radio" name="estrelas" id="star-1" value="1" class="star-rating__input" required
+               {% if form.estrelas.value == 1 or form.estrelas.value == '1' %}checked{% endif %}>
+        <label for="star-1" class="star-rating__btn" data-star="1">{% include 'partials/star_svg.html' with class='star-rating__svg' %}</label>
+    </div>
+
+    <div class="star-rating-feedback" id="starRatingFeedback" aria-live="polite">
+        <span class="star-rating-feedback__icons" id="starRatingPreview" aria-hidden="true"></span>
+        <span class="star-rating-feedback__text" id="starRatingHint">Passe o mouse ou clique para avaliar</span>
+    </div>
+
+    {% if form.estrelas.errors %}
+        <ul class="errorlist">
+            {% for error in form.estrelas.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

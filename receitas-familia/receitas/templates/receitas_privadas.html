@@ -1,36 +1,62 @@
 {% extends 'base.html' %}
 
+{% block title %}Receitas Privadas — Receitas da Família{% endblock %}
+
 {% block content %}
-<h2 class="mb-4">🔒 Minhas Receitas Privadas</h2>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Minhas Receitas Privadas</h1>
+        <p class="page-subtitle">Receitas visíveis apenas para você</p>
+    </div>
+    <div class="page-header__actions">
+        <a href="{% url 'publicar_receita_publica' %}" class="btn-app btn-app--primary btn-app--sm">+ Nova receita</a>
+    </div>
+</div>
 
 {% if receitas_privadas %}
-    <div class="row">
+    <div class="grid-cards">
         {% for receita in receitas_privadas %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    {% if receita.imagem %}
-                        <img src="{{ receita.imagem.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ receita.titulo }}</h5>
-                        <small class="text-muted">{{ receita.criado_em|date:"d/m/Y" }}</small>
+            <article class="card-app">
+                {% if receita.imagem %}
+                    <div class="card-app__media">
+                        <img src="{{ receita.imagem.url }}" alt="{{ receita.titulo }}" loading="lazy">
                     </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn btn-outline-primary btn-sm">Ver receita</a>
-                        <div>
-                            <a href="{% url 'tornar_publica' receita.pk %}"
-                            class="btn btn-outline-success btn-sm me-1"
-                            onclick="return confirm('Tornar esta receita pública?')">🌐 Tornar pública</a>
-                            <a href="{% url 'remover_receita_publica' receita.pk %}"
-                            class="btn btn-outline-danger btn-sm"
-                            onclick="return confirm('Remover esta receita?')">🗑️</a>
-                        </div>
+                {% else %}
+                    <div class="card-app__media card-app__media--placeholder" aria-hidden="true">🔒</div>
+                {% endif %}
+                <div class="card-app__body">
+                    <h3 class="card-app__title">{{ receita.titulo }}</h3>
+                    <p class="card-app__meta">{{ receita.criado_em|date:"d/m/Y" }}</p>
+                    <span class="badge-app">Privada</span>
+                </div>
+                <div class="card-app__footer">
+                    <div class="card-app__actions">
+                        <a href="{% url 'detalhe_receita_publica' receita.pk %}" class="btn-app btn-app--primary btn-app--sm">Ver</a>
+                        <form method="post"
+                              action="{% url 'tornar_publica' receita.pk %}"
+                              class="form-inline-action"
+                              data-confirm="Tornar pública? A receita passará a aparecer no feed.">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-app btn-app--success btn-app--sm">Publicar no feed</button>
+                        </form>
+                        <form method="post"
+                              action="{% url 'remover_receita_publica' receita.pk %}"
+                              class="form-inline-action"
+                              data-confirm="Remover esta receita?">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-app btn-app--danger btn-app--icon btn-app--sm" title="Remover">🗑</button>
+                        </form>
                     </div>
                 </div>
-            </div>
+            </article>
         {% endfor %}
     </div>
 {% else %}
-    <p class="text-muted">Você não tem receitas privadas ainda.</p>
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">🔒</div>
+        <h2 class="empty-state__title">Nenhuma receita privada</h2>
+        <p class="empty-state__text">Publique uma receita e ative o interruptor &quot;Receita privada&quot; para guardá-la só para você.</p>
+        <a href="{% url 'publicar_receita_publica' %}" class="btn-app btn-app--primary">Publicar receita</a>
+    </div>
 {% endif %}
 {% endblock %}

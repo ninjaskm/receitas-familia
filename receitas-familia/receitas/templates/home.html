@@ -1,32 +1,39 @@
 {% extends 'base.html' %}
 
+{% block title %}Meus Grupos — Receitas da Família{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Meus Grupos Familiares</h2>
-    <a href="{% url 'criar_grupo' %}" class="btn btn-primary">+ Novo Grupo</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Meus Grupos Familiares</h1>
+        <p class="page-subtitle">Organize e compartilhe receitas com sua família</p>
+    </div>
+    <div class="page-header__actions">
+        <a href="{% url 'criar_grupo' %}" class="btn-app btn-app--primary">+ Novo Grupo</a>
+    </div>
 </div>
 
 {% if grupos %}
-    <div class="row">
+    <div class="grid-cards">
         {% for grupo in grupos %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ grupo.nome }}</h5>
-                        <p class="card-text text-muted">{{ grupo.descricao }}</p>
-                        <small class="text-muted">{{ grupo.membros.count }} membro(s)</small>
-                    </div>
-                    <div class="card-footer">
-                        <a href="{% url 'detalhe_grupo' grupo.pk %}" class="btn btn-outline-primary btn-sm">Ver grupo</a>
-                    </div>
+            <article class="card-app">
+                <div class="card-app__body">
+                    <h3 class="card-app__title">{{ grupo.nome }}</h3>
+                    <p class="card-app__text">{{ grupo.descricao|default:"Sem descrição" }}</p>
+                    <span class="badge-app badge-app--muted">{{ grupo.membros.count }} membro{{ grupo.membros.count|pluralize:"s" }}</span>
                 </div>
-            </div>
+                <div class="card-app__footer">
+                    <a href="{% url 'detalhe_grupo' grupo.pk %}" class="btn-app btn-app--primary btn-app--sm">Ver grupo</a>
+                </div>
+            </article>
         {% endfor %}
     </div>
 {% else %}
-    <div class="text-center mt-5">
-        <p class="text-muted">Você ainda não participa de nenhum grupo.</p>
-        <a href="{% url 'criar_grupo' %}" class="btn btn-primary">Criar meu primeiro grupo</a>
+    <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">👨‍👩‍👧‍👦</div>
+        <h2 class="empty-state__title">Nenhum grupo ainda</h2>
+        <p class="empty-state__text">Crie seu primeiro grupo familiar e comece a compartilhar receitas especiais.</p>
+        <a href="{% url 'criar_grupo' %}" class="btn-app btn-app--primary btn-app--lg">Criar meu primeiro grupo</a>
     </div>
 {% endif %}
 {% endblock %}

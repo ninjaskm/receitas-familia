@@ -7,6 +7,7 @@ from django.contrib import messages
 from .models import GrupoFamiliar, Receita, Avaliacao, ReceitaPublica, AvaliacaoPublica
 from .forms import ReceitaForm, GrupoForm, AvaliacaoForm, ReceitaPublicaForm, AvaliacaoPublicaForm
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 @login_required
 def home(request):
@@ -237,7 +238,11 @@ def publicar_receita_publica(request):
         if form.is_valid():
             receita = form.save(commit=False)
             receita.autor = request.user
+            receita.privada = bool(form.cleaned_data.get('privada'))
             receita.save()
+            if receita.privada:
+                messages.success(request, 'Receita salva como privada!')
+                return redirect('minhas_receitas_privadas')
             messages.success(request, 'Receita publicada no feed!')
             return redirect('feed')
     else:
@@ -246,10 +251,14 @@ def publicar_receita_publica(request):
 
 
 @login_required
+@require_POST
 def remover_receita_publica(request, pk):
     receita = get_object_or_404(ReceitaPublica, pk=pk, autor=request.user)
+    era_privada = receita.privada
     receita.delete()
-    messages.success(request, 'Receita removida do feed.')
+    messages.success(request, 'Receita removida com sucesso.')
+    if era_privada:
+        return redirect('minhas_receitas_privadas')
     return redirect('feed')
 
 def detalhe_receita_publica(request, pk):
@@ -324,18 +333,20 @@ def minhas_receitas_privadas(request):
 
 
 @login_required
+@require_POST
 def tornar_publica(request, pk):
     receita = get_object_or_404(ReceitaPublica, pk=pk, autor=request.user)
     receita.privada = False
     receita.save()
-    messages.success(request, 'Receita tornada pública com sucesso!')
-    return redirect('minhas_receitas_privadas')
+    messages.success(request, 'Receita tornada pública! Ela já aparece no feed.')
+    return redirect('feed')
 
 
 @login_required
+@require_POST
 def tornar_privada(request, pk):
     receita = get_object_or_404(ReceitaPublica, pk=pk, autor=request.user)
     receita.privada = True
     receita.save()
     messages.success(request, 'Receita tornada privada com sucesso!')
-    return redirect('feed')
+    return redirect('minhas_receitas_privadas')
