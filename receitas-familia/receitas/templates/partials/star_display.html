@@ -1,5 +1,5 @@
 {% if score %}
-<span class="star-display star-display--{{ size|default:'sm' %}" aria-label="{{ score }} de 5 estrelas">
+<span class="star-display star-display--{{ size|default:'sm' }}" aria-label="{{ score }} de 5 estrelas">
     {% for i in "12345" %}
         {% if forloop.counter <= score %}
             {% include 'partials/star_svg.html' with class='star-display__svg star-display__svg--on' %}
