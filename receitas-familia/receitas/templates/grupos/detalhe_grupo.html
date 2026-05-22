@@ -59,4 +59,20 @@
         <a href="{% url 'adicionar_receita' grupo.pk %}" class="btn-app btn-app--primary">Adicionar receita</a>
     </div>
 {% endif %}
+{% if grupo.admin == user %}
+<div style="margin-top:1.5rem;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.92);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+    <h5 style="margin:0 0 0.75rem;font-size:0.9375rem;font-weight:700;color:var(--brand-dark);">👥 Convidar membro</h5>
+    <form method="post" action="{% url 'convidar_membro' grupo.pk %}" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        {% csrf_token %}
+        <input
+            type="text"
+            name="username"
+            class="form-control"
+            placeholder="Nome de usuário..."
+            required
+            style="flex:1;min-width:180px;">
+        <button type="submit" class="btn-app btn-app--primary btn-app--sm">Convidar</button>
+    </form>
+</div>
+{% endif %}
 {% endblock %}

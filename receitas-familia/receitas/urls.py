@@ -29,4 +29,7 @@ urlpatterns = [
     path('minhas-receitas-privadas/', views.minhas_receitas_privadas, name='minhas_receitas_privadas'),
     path('feed/receita/<int:pk>/tornar-publica/', views.tornar_publica, name='tornar_publica'),
     path('feed/receita/<int:pk>/tornar-privada/', views.tornar_privada, name='tornar_privada'),
+    path('grupo/<int:grupo_pk>/convidar/', views.convidar_membro, name='convidar_membro'),
+    path('convite/<int:convite_pk>/aceitar/', views.aceitar_convite, name='aceitar_convite'),
+    path('convite/<int:convite_pk>/recusar/', views.recusar_convite, name='recusar_convite'),
 ]

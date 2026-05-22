@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-from .models import GrupoFamiliar, Receita, Avaliacao, ReceitaPublica, AvaliacaoPublica
+from .models import GrupoFamiliar, Receita, Avaliacao, ReceitaPublica, AvaliacaoPublica, Convite
 from .forms import ReceitaForm, GrupoForm, AvaliacaoForm, ReceitaPublicaForm, AvaliacaoPublicaForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -350,3 +350,56 @@ def tornar_privada(request, pk):
     receita.save()
     messages.success(request, 'Receita tornada privada com sucesso!')
     return redirect('minhas_receitas_privadas')
+
+
+@login_required
+def convidar_membro(request, grupo_pk):
+    grupo = get_object_or_404(GrupoFamiliar, pk=grupo_pk)
+
+    if grupo.admin != request.user:
+        messages.error(request, 'Apenas o admin pode convidar membros.')
+        return redirect('detalhe_grupo', pk=grupo_pk)
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        try:
+            convidado = User.objects.get(username=username)
+        except User.DoesNotExist:
+            messages.error(request, f'Usuário "{username}" não encontrado.')
+            return redirect('detalhe_grupo', pk=grupo_pk)
+
+        if convidado in grupo.membros.all():
+            messages.warning(request, f'{username} já é membro do grupo.')
+            return redirect('detalhe_grupo', pk=grupo_pk)
+
+        if Convite.objects.filter(grupo=grupo, convidado=convidado).exists():
+            messages.warning(request, f'{username} já tem um convite pendente.')
+            return redirect('detalhe_grupo', pk=grupo_pk)
+
+        Convite.objects.create(
+            grupo=grupo,
+            convidado=convidado,
+            convidado_por=request.user
+        )
+        messages.success(request, f'Convite enviado para {username}!')
+        return redirect('detalhe_grupo', pk=grupo_pk)
+
+    return redirect('detalhe_grupo', pk=grupo_pk)
+
+
+@login_required
+def aceitar_convite(request, convite_pk):
+    convite = get_object_or_404(Convite, pk=convite_pk, convidado=request.user)
+    convite.grupo.membros.add(request.user)
+    convite.delete()
+    messages.success(request, f'Você entrou no grupo {convite.grupo.nome}!')
+    return redirect('detalhe_grupo', pk=convite.grupo.pk)
+
+
+@login_required
+def recusar_convite(request, convite_pk):
+    convite = get_object_or_404(Convite, pk=convite_pk, convidado=request.user)
+    nome_grupo = convite.grupo.nome
+    convite.delete()
+    messages.info(request, f'Convite para "{nome_grupo}" recusado.')
+    return redirect('feed')

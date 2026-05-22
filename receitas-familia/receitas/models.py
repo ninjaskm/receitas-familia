@@ -78,3 +78,16 @@ class AvaliacaoPublica(models.Model):
 
     def __str__(self):
         return f"{self.usuario} - {self.receita} ({self.estrelas}★)"
+    
+
+class Convite(models.Model):
+    grupo = models.ForeignKey(GrupoFamiliar, on_delete=models.CASCADE, related_name='convites')
+    convidado = models.ForeignKey(User, on_delete=models.CASCADE, related_name='convites_recebidos')
+    convidado_por = models.ForeignKey(User, on_delete=models.CASCADE, related_name='convites_enviados')
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('grupo', 'convidado')
+
+    def __str__(self):
+        return f"{self.convidado_por} convidou {self.convidado} para {self.grupo}"
